@@ -1,0 +1,14 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<div class="row title">
+	<div class="col-xs-12 text-center title">
+			<h1>Delete {{category.name}}?</h1>
+	</div>
+</div>
+<div class="row content">
+  <div class="col-xs-12">
+[<a href="{{url_for('deleteCategoryConfirm', category_id=category.id, confirm_id=category.id)}}">[YES:DELETE!]]</a> [<a href="{{url_for('home')}}">[NO:CANCEL]</a>]
+</div>
+</div>
+{% endblock %}

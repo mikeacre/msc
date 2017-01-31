@@ -1,0 +1,53 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<div class="row title">
+	<div class="col-xs-4 text-center title">
+		<h1><a href="{{url_for('home')}}">&lt;-Back</a></h1>
+	</div>
+	<div class="col-xs-4 text-center title">
+			<h1>{{category.name}}</h1>
+	</div>
+	<div class="col-xs-4 text-center title">
+	</div>
+</div>
+<div class="row content">
+	<section class="tiles">
+		<article class="style1">
+			<span class="image">
+				<img src="http://placekitten.com/300/250" alt="" />
+			</span>
+			<a href="{{url_for('addItem', category_id=category.id)}}">
+				<h1>+</h1>
+				<div class="content">
+					<p>Add Item</p>
+				</div>
+			</a>
+		</article>
+	{% for item in items %}
+		<article class="style1">
+			<span class="image">
+				<img src="{{url_for('static', filename='itempics/%s' % item.picture)}}" height="250px" alt="" />
+			</span>
+			<a href="{{url_for('displayItem', item_id = item.id)}}">
+				<h2>{{item.title}}</h2>
+				<div class="content">
+					<p>{{item.description}}</p>
+				</div>
+			</a>
+		</article>
+	{% endfor %}
+</section>
+
+
+</div>
+
+	{% if admin == 'yes' %}
+	<div class="row admin">
+		<div class="col-xs-12">
+			<a href="{{url_for('deleteCategory', category_id=category.id)}}">Delete category</a>
+		</div>
+	</div>
+
+{% endif %}
+{% endblock %}

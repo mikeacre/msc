@@ -1,0 +1,24 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<div class="row title">
+	<div class="col-xs-4 text-center title">
+		<h1><a href="{{url_for('items', category_id=item.category_id)}}">&lt;-Back</a></h1>
+	</div>
+	<div class="col-xs-4 text-center title">
+			<h1>{{item.title}}</h1>
+	</div>
+	<div class="col-xs-4 text-center title">
+	</div>
+</div>
+<div class="row text-center content">
+      <center><img src="{{url_for('static', filename='itempics/%s' % item.picture)}}" width="80%" class="img=responsive"></center>
+</div>
+<div class="row text-center content">
+      {{item.description}}
+      <p>Posted by: <a href="{{url_for('showUser', user_id=item.user_id)}}">{{item.user.name}}</a></p>
+      {% if session['user_id'] == item.user_id %}
+      <p><a href="{{url_for('editItem', item_id=item.id)}}">[EDIT ITEM]</a>[<a href="{{url_for('deleteItem', item_id=item.id)}}">DELETE</a>]</p>
+      {% endif %}
+</div>
+{% endblock %}

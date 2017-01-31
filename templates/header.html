@@ -1,0 +1,35 @@
+<div class="row header">
+	<div class="col-xs-2">
+		<a href="{{url_for('home')}}">
+			<img src="{{ url_for('static', filename='home.jpg') }}" class="img-responsive">
+		</a>
+	</div>
+	<div class="col-xs-8 header text-capitalize text-center">
+			My Strange Collection
+	</div>
+	<div class="col-xs-2 login">
+		{%if 'name' not in session %}
+			<img src="{{ url_for('static', filename='blank_user.gif') }}" class="img-responsive"><br>
+			<a href="{{url_for('showLogin')}}">Log-In | Register</a>
+			{% else %}
+			<a href="{{url_for('myAccount')}}">
+			<img src="{{session['picture']}}" class="img-responsive"></a><br>
+			<a href="{{url_for('disconnect')}}">Logout</a>
+			{% endif %}
+
+	</div>
+</div>
+{% with messages = get_flashed_messages() %}
+<div class="row" style="background-color:#cccccc;border-bottom:1px solid #000;margin-bottom:5px;">
+	<div class="flash">
+	      	{% if messages %}
+	        <ul>
+	        {% for message in messages %}
+	            <li> <strong> {{ message }} </strong> </li>
+	        {% endfor %}
+	        </ul>
+	        {% endif %}
+
+	</div>
+</div>
+{% endwith %}

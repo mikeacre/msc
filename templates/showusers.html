@@ -1,0 +1,32 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<div class="row title">
+	<div class="col-xs-4 text-center title">
+			<h1><a href="{{url_for('home')}}">&lt;- Categories</a></h1>
+	</div>
+	<div class="col-xs-4 text-center title">
+			<h1>Collections</h1>
+	</div>
+	<div class="col-xs-4 text-center title">
+			<h1>Search</h1>
+	</div>
+</div>
+<div class="row content">
+	<section class="tiles">
+	{% for user in users %}
+		<article class="style1">
+			<span class="image">
+				<img src="{{user.picture}}" alt="" />
+			</span>
+			<a href="{{url_for('showUser', user_id=user.id)}}">
+				<h2>{{user.name}}</h2>
+				<div class="content">
+					<p>{{user.username}}</p>
+				</div>
+			</a>
+		</article>
+	{% endfor %}
+</section>
+</div>
+{% endblock %}

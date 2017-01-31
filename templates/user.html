@@ -1,0 +1,41 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<div class="row title">
+	<div class="col-xs-4">
+		<img src="{{user.picture}}" class="img-responsive"><br>
+		<b>Name:</b>{{user.name}}<br>
+		<b>Items:</b>{{items.__len__()}}<br>
+		{% if name not 	in session %}
+		<hr>
+		<b>Send E-mail:</b><br>
+		<textarea> Hey I really like your collection!</textarea><br>
+		<input type="submit" value="Send">
+		{% endif %}
+
+	</div>
+	<div class="col-xs-8 text-center title"  style="padding-right:40px;">
+		<div class="row">
+			<h1>{{user.name}}'s Collection</h1>
+		</div>
+		<div class="row">
+			<section class="tiles" style="">
+				{% for item in items %}
+					<article class="style1">
+						<span class="image">
+							<img src="{{url_for('static', filename='itempics/%s' % item.picture)}}" alt="" />
+						</span>
+						<a href="{{url_for('displayItem', item_id=item.id)}}">
+							<h2>{{item.title}}</h2>
+							<div class="content">
+								<p>{{item.description}}</p>
+							</div>
+						</a>
+					</article>
+				{% endfor %}
+		</section>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

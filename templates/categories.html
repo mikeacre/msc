@@ -1,0 +1,43 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<div class="row title">
+	<div class="col-xs-4 text-center title">
+			<h1><a href="{{url_for('showUsers')}}">&lt;- Collections</a></h1>
+	</div>
+	<div class="col-xs-4 text-center title">
+			<h1>Categories</h1>
+	</div>
+	<div class="col-xs-4 text-center title">
+			<h1>Search</h1>
+	</div>
+</div>
+<div class="row content">
+	<section class="tiles">
+		<article class="style1">
+			<span class="image">
+				<img src="http://placekitten.com/300/250" alt="" />
+			</span>
+			<a href="{{url_for('addCategory')}}">
+				<h1>+</h1>
+				<div class="content">
+					<p>Add Category</p>
+				</div>
+			</a>
+		</article>
+	{% for category in categories %}
+		<article class="style1">
+			<span class="image">
+				<img src="{{url_for('static', filename='itempics/%s' % category.picture)}}" alt="" />
+			</span>
+			<a href="{{url_for('items', category_id=category.id)}}">
+				<h2>{{category.name}}</h2>
+				<div class="content">
+					<p>{{category.description}}</p>
+				</div>
+			</a>
+		</article>
+	{% endfor %}
+</section>
+</div>
+{% endblock %}

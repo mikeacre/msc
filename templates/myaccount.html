@@ -1,0 +1,25 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<div class="row title">
+	<div class="col-xs-12 text-center title">
+			<h1>{{session.get('username')}}'s Account</h1>
+	</div>
+</div>
+<div class="row content">
+  <div class="col-xs-12">
+  <form action="#" method = "post">
+	 Item Name:<input type="text" name="name"><br>
+	 Category:<select name="category">
+		 	{% for category in categories %}
+			<option value="{{category.id}}">{{category.name}}</option>
+			{% endfor %}
+		</select><br>
+   Description:<input type="text" name="description"><br>
+   Picture: <input type="text" name="picture"><br>
+   Price: <input type="text" name="price"><br>
+   <input type="submit" value="Add!">
+  </form>
+</div>
+</div>
+{% endblock %}
