@@ -15,9 +15,10 @@ import requests
 import os
 from werkzeug.utils import secure_filename
 import smtplib
+from functools import wraps
 
-# Folder where imagaes will be uploaded
-UPLOAD_FOLDER = '/vagrant/static/itempics'
+# Folder where imaages will be uploaded
+UPLOAD_FOLDER = './static/itempics'
 # Extensions for images that may be uploaded
 ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'gif', 'png'])
 app = Flask(__name__, static_url_path='/static')
@@ -33,6 +34,14 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'email' in login_session:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 def allowed_file(filename):
@@ -280,22 +289,17 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-
+@login_required
 @app.route('/myaccount/', methods=['GET', 'POST'])
 def myAccount():
-    if 'name' not in login_session:
-        return redirect(url_for('home'))
     if request.method == 'POST':
         return render_template('addcategory.html')
     else:
         return render_template('myaccount.html')
 
-
+@login_required
 @app.route('/addcategory/', methods=['GET', 'POST'])
 def addCategory():
-    if 'name' not in login_session:
-        flash('Please Login before you can post!')
-        return redirect(url_for('home'))
     if request.method == 'POST':
         newCategory = Category(
             name=request.form['name'],
@@ -325,23 +329,20 @@ def addCategory():
     else:
         return render_template('addcategory.html')
 
-
+@login_required
 @app.route('/deleteitem/<int:item_id>/<int:confirm_id>/')
 def deleteItemConfirm(item_id, confirm_id):
-    if 'name' not in login_session:
-        return redirect(url_for('home'))
     item = session.query(OddItem).filter_by(id=item_id).one()
     if item.user.id == login_session['user_id']:
+        os.remove("%s/%s" % (UPLOAD_FOLDER,item.picture))
         session.delete(item)
         flash('Item Deleted')
         session.commit()
         return redirect(url_for('home'))
 
-
+@login_required
 @app.route('/deleteitem/<int:item_id>/')
 def deleteItem(item_id):
-    if 'name' not in login_session:
-        return redirect(url_for('home'))
     item = session.query(OddItem).filter_by(id=item_id).one()
     return render_template('confirmdelete.html', item=item)
 
@@ -365,10 +366,9 @@ def deleteCategory(category_id):
     return render_template('confirmdeletecategory.html', category=category)
 
 
+@login_required
 @app.route('/edititem/<int:item_id>/', methods=['GET', 'POST'])
 def editItem(item_id):
-    if 'name' not in login_session:
-        return redirect(url_for('home'))
     if request.method == 'POST':
         item = session.query(OddItem).filter_by(id=item_id).one()
         item.title = request.form['title']
@@ -377,17 +377,19 @@ def editItem(item_id):
         return redirect(url_for('displayItem', item_id=item_id))
     else:
         item = session.query(OddItem).filter_by(id=item_id).one()
-        categories = session.query(Category).all()
-        return render_template('edititem.html',
-                               item=item,
-                               categories=categories)
+        if item.user.id == login_session['user_id']:
+            categories = session.query(Category).all()
+            return render_template('edititem.html',
+                                   item=item,
+                                   categories=categories)
+        else:
+            flash('That is not your item!')
+            return redirect(url_for('home'))
 
 
+@login_required
 @app.route('/additem/<int:category_id>/', methods=['GET', 'POST'])
 def addItem(category_id):
-    if 'name' not in login_session:
-        flash('Please Login to add an item')
-        return redirect(url_for('showLogin'))
     if request.method == 'POST':
         newItem = OddItem(
                           title=request.form['name'],
@@ -488,6 +490,12 @@ def itemsByCategoryJSON(category_id):
 def itemsByUserJSON(user_id):
     items = session.query(OddItem).filter_by(user_id=user_id).all()
     return jsonify(Category=[i.serialize for i in items])
+
+# Json for Items by user
+@app.route('/item/<int:item_id>/JSON')
+def itemJSON(item_id):
+    item = session.query(OddItem).filter_by(id=item_id).one()
+    return jsonify(Category=[item.serialize])
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
