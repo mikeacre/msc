@@ -38,8 +38,9 @@ session = DBSession()
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'email' in login_session:
-            return redirect(url_for('login', next=request.url))
+        if 'email' not in login_session:
+            flash('Please log-in to access that page.')
+            return redirect(url_for('showLogin'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -289,16 +290,18 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-@login_required
+
 @app.route('/myaccount/', methods=['GET', 'POST'])
+@login_required
 def myAccount():
     if request.method == 'POST':
         return render_template('addcategory.html')
     else:
         return render_template('myaccount.html')
 
-@login_required
+
 @app.route('/addcategory/', methods=['GET', 'POST'])
+@login_required
 def addCategory():
     if request.method == 'POST':
         newCategory = Category(
@@ -329,8 +332,9 @@ def addCategory():
     else:
         return render_template('addcategory.html')
 
-@login_required
+
 @app.route('/deleteitem/<int:item_id>/<int:confirm_id>/')
+@login_required
 def deleteItemConfirm(item_id, confirm_id):
     item = session.query(OddItem).filter_by(id=item_id).one()
     if item.user.id == login_session['user_id']:
@@ -340,14 +344,16 @@ def deleteItemConfirm(item_id, confirm_id):
         session.commit()
         return redirect(url_for('home'))
 
-@login_required
+
 @app.route('/deleteitem/<int:item_id>/')
+@login_required
 def deleteItem(item_id):
     item = session.query(OddItem).filter_by(id=item_id).one()
     return render_template('confirmdelete.html', item=item)
 
 
 @app.route('/deletecategory/<int:category_id>/<int:confirm_id>/')
+@login_required
 def deleteCategoryConfirm(category_id, confirm_id):
     if 'name' not in login_session and login_session['name'] != 'Mike Acre':
         return redirect(url_for('home'))
@@ -359,6 +365,7 @@ def deleteCategoryConfirm(category_id, confirm_id):
 
 
 @app.route('/deletecategory/<int:category_id>/')
+@login_required
 def deleteCategory(category_id):
     if 'name' not in login_session and login_session['name'] != 'Mike Acre':
         return redirect(url_for('home'))
@@ -366,29 +373,27 @@ def deleteCategory(category_id):
     return render_template('confirmdeletecategory.html', category=category)
 
 
-@login_required
 @app.route('/edititem/<int:item_id>/', methods=['GET', 'POST'])
+@login_required
 def editItem(item_id):
-    if request.method == 'POST':
-        item = session.query(OddItem).filter_by(id=item_id).one()
+    item = session.query(OddItem).filter_by(id=item_id).one()
+    if item.user.id != login_session['user_id']:
+        flash('That is not your item!')
+        return redirect(url_for('home'))
+    if request.method == 'POST':        
         item.title = request.form['title']
         item.description = request.form['description']
         item.price = request.form['price']
         return redirect(url_for('displayItem', item_id=item_id))
     else:
-        item = session.query(OddItem).filter_by(id=item_id).one()
-        if item.user.id == login_session['user_id']:
-            categories = session.query(Category).all()
-            return render_template('edititem.html',
-                                   item=item,
-                                   categories=categories)
-        else:
-            flash('That is not your item!')
-            return redirect(url_for('home'))
+        categories = session.query(Category).all()
+        return render_template('edititem.html',
+                               item=item,
+                               categories=categories)
 
 
-@login_required
 @app.route('/additem/<int:category_id>/', methods=['GET', 'POST'])
+@login_required
 def addItem(category_id):
     if request.method == 'POST':
         newItem = OddItem(
