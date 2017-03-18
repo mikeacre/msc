@@ -26,6 +26,7 @@ UPLOAD_FOLDER = './static/itempics'
 ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'gif', 'png'])
 app = Flask(__name__, static_url_path='/static')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.debug = True
 TEMPLATES_AUTO_RELOAD = True
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
@@ -513,5 +514,4 @@ def itemJSON(item_id):
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
-    app.debug = True
     app.run()
