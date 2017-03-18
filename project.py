@@ -16,6 +16,9 @@ import os
 from werkzeug.utils import secure_filename
 import smtplib
 from functools import wraps
+from PIL import Image
+
+
 
 # Folder where imaages will be uploaded
 UPLOAD_FOLDER = './static/itempics'
@@ -321,8 +324,7 @@ def addCategory():
             if file.filename == '':
                 filename = 'default.jpg'
             if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                uploadImage(file, os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
 
         flash('New category %s Successfully Created' % newCategory.name)
         newCategory.picture = photo
@@ -380,7 +382,7 @@ def editItem(item_id):
     if item.user.id != login_session['user_id']:
         flash('That is not your item!')
         return redirect(url_for('home'))
-    if request.method == 'POST':        
+    if request.method == 'POST':
         item.title = request.form['title']
         item.description = request.form['description']
         item.price = request.form['price']
@@ -404,7 +406,7 @@ def addItem(category_id):
                           user_id=login_session['user_id'])
         session.add(newItem)
         session.flush()
-        if 'file' not in request.files:
+        if request.files['file'].filename == '':
             photo = 'default.jpg'
         else:
             file = request.files['file']
@@ -414,10 +416,10 @@ def addItem(category_id):
             # if user does not select file, browser also
             # submit a empty part without filename
             if file.filename == '':
-                filename = 'default.jpg'
+                file.filename = 'default.jpg'
             if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                uploadImage(file, os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
+
 
         newItem.picture = photo
         flash('New item %s Successfully Created' % photo)
@@ -429,6 +431,13 @@ def addItem(category_id):
         return render_template('additem.html',
                                categories=categories,
                                thiscategory=thiscategory)
+
+
+def uploadImage(file, filename):
+    maxsize = (1028, 1028)
+    img = Image.open(file)
+    img.thumbnail(maxsize, Image.ANTIALIAS)
+    img.save(filename)
 
 
 @app.route('/items/<int:category_id>/')
@@ -505,4 +514,4 @@ def itemJSON(item_id):
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
-    app.run(host='0.0.0.0', port=1235)
+    app.run()
