@@ -63,7 +63,7 @@ class OddItem(Base):
         }
 
 
-engine = create_engine('sqlite:///var/www/msc/odddb.db')
+engine = create_engine('sqlite:////var/www/msc/odddb.db')
 
 
 Base.metadata.create_all(engine)
