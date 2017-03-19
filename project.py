@@ -37,7 +37,7 @@ APPLICATION_NAME = "Odd Item Application"
 engine = create_engine('sqlite:////var/www/msc/odddb.db')
 Base.metadata.bind = engine
 
-DBSession = scoped_session(sessionmaker(bind=engine))
+DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 def login_required(f):
