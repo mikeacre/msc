@@ -33,7 +33,7 @@ CLIENT_ID = json.loads(
 APPLICATION_NAME = "Odd Item Application"
 
 # Connect to Database and create database session
-engine = create_engine('sqlite:///odddb.db')
+engine = create_engine('sqlite:////var/www/msc/odddb.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
