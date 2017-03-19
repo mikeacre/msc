@@ -25,6 +25,7 @@ UPLOAD_FOLDER = './static/itempics'
 # Extensions for images that may be uploaded
 ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'gif', 'png'])
 app = Flask(__name__, static_url_path='/static')
+app.secret_key = 'super_secret_key'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.debug = True
 TEMPLATES_AUTO_RELOAD = True
@@ -513,5 +514,5 @@ def itemJSON(item_id):
     return jsonify(Category=[item.serialize])
 
 if __name__ == '__main__':
-    app.secret_key = 'super_secret_key'
+
     app.run()
