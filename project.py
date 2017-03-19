@@ -480,12 +480,14 @@ def showUser(user_id):
 @app.route('/showusers/', methods=['GET'])
 def showUsers():
     users = session.query(User).all()
+    session.commit()
     return render_template('showusers.html', users=users)
 
 
 @app.route('/')
 def home():
     categories = session.query(Category).order_by("name asc").all()
+    session.commit()
     return render_template('categories.html', categories=categories)
 
 
