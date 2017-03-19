@@ -29,7 +29,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.debug = True
 TEMPLATES_AUTO_RELOAD = True
 CLIENT_ID = json.loads(
-    open('client_secrets.json', 'r').read())['web']['client_id']
+    open('/var/www/msc/client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Odd Item Application"
 
 # Connect to Database and create database session
