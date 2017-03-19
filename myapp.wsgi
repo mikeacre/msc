@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import sys
 
-sys.path.append('/var/www/msc')
+sys.path.append('/var/www/flask/msc')
 
-from webtool import app as application
+from project import app as application
