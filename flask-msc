@@ -1,0 +1,19 @@
+<VirtualHost *:80>
+    ServerName strikesparks.com
+
+    ServerAdmin webmaster@localhost
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+
+
+    WSGIDaemonProcess msc  python-home=/var/www/msc/msc
+    WSGIScriptAlias / /var/www/msc/myapp.wsgi
+
+    <Directory /var/www/msc>
+        WSGIProcessGroup msc
+        WSGIApplicationGroup %{GLOBAL}
+        Order deny,allow
+        Allow from all
+    </Directory>
+</VirtualHost>

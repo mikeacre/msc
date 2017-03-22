@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/var/www/msc/msc/bin/python
 import sys
 
 sys.path.append('/var/www/msc')
