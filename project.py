@@ -18,6 +18,7 @@ import smtplib
 from functools import wraps
 from PIL import Image
 from sqlalchemy.orm import scoped_session
+from flask_sqlalchemy import SQLAlchemy
 
 
 
@@ -37,11 +38,14 @@ CLIENT_ID = json.loads(
 APPLICATION_NAME = "Odd Item Application"
 
 # Connect to Database and create database session
-engine = create_engine('sqlite:////var/www/msc/odddb.db')
-Base.metadata.bind = engine
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////var/www/msc/odddb.db'
+db = SQLAlchemy(app)
 
-DBSession = sessionmaker(bind=engine)
-session = scoped_session(DBSession())
+#engine = create_engine('sqlite:////var/www/msc/odddb.db')
+#Base.metadata.bind = engine
+
+#DBSession = sessionmaker(bind=engine)
+#session = scoped_session(DBSession())
 
 def login_required(f):
     @wraps(f)
@@ -487,7 +491,7 @@ def showUsers():
 
 @app.route('/')
 def home():
-    categories = session.query(Category).order_by("name asc").all()
+    categories = db.session.query(Category).order_by("name asc").all()
     return render_template('categories.html', categories=categories)
 
 
