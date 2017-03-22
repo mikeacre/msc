@@ -484,7 +484,7 @@ def showUsers():
 
 @app.route('/')
 def home():
-    categories = null;
+    categories = "hi;
     return render_template('categories.html', categories=categories)
 
 
