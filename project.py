@@ -39,7 +39,7 @@ engine = create_engine('sqlite:////var/www/msc/odddb.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
-session = DBSession()
+session = scoped_session(DBSession())
 
 def login_required(f):
     @wraps(f)
@@ -480,14 +480,12 @@ def showUser(user_id):
 @app.route('/showusers/', methods=['GET'])
 def showUsers():
     users = session.query(User).all()
-    session.commit()
     return render_template('showusers.html', users=users)
 
 
 @app.route('/')
 def home():
     categories = session.query(Category).order_by("name asc").all()
-    session.close()
     return render_template('categories.html', categories=categories)
 
 
