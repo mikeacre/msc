@@ -319,8 +319,8 @@ def addCategory():
         newCategory = Category(
             name=request.form['name'],
             description=request.form['description'])
-        session.add(newCategory)
-        session.flush()
+        db.session.add(newCategory)
+        db.session.flush()
         if 'file' not in request.files:
             photo = 'default.jpg'
         else:
@@ -337,7 +337,7 @@ def addCategory():
 
         flash('New category %s Successfully Created' % newCategory.name)
         newCategory.picture = photo
-        session.commit()
+        db.session.commit()
 
         return redirect(url_for('home'))
     else:
@@ -347,10 +347,10 @@ def addCategory():
 @app.route('/deleteitem/<int:item_id>/<int:confirm_id>/')
 @login_required
 def deleteItemConfirm(item_id, confirm_id):
-    item = session.query(OddItem).filter_by(id=item_id).one()
+    item = db.session.query(OddItem).filter_by(id=item_id).one()
     if item.user.id == login_session['user_id']:
         os.remove("%s/%s" % (UPLOAD_FOLDER,item.picture))
-        session.delete(item)
+        db.session.delete(item)
         flash('Item Deleted')
         session.commit()
         return redirect(url_for('home'))
@@ -359,7 +359,7 @@ def deleteItemConfirm(item_id, confirm_id):
 @app.route('/deleteitem/<int:item_id>/')
 @login_required
 def deleteItem(item_id):
-    item = session.query(OddItem).filter_by(id=item_id).one()
+    item = db.session.query(OddItem).filter_by(id=item_id).one()
     return render_template('confirmdelete.html', item=item)
 
 
@@ -368,10 +368,10 @@ def deleteItem(item_id):
 def deleteCategoryConfirm(category_id, confirm_id):
     if 'name' not in login_session and login_session['name'] != 'Mike Acre':
         return redirect(url_for('home'))
-    category = session.query(Category).filter_by(id=category_id).one()
-    session.delete(category)
+    category = db.session.query(Category).filter_by(id=category_id).one()
+    db.session.delete(category)
     flash('Category Deleted')
-    session.commit()
+    db.session.commit()
     return redirect(url_for('home'))
 
 
@@ -380,14 +380,14 @@ def deleteCategoryConfirm(category_id, confirm_id):
 def deleteCategory(category_id):
     if 'name' not in login_session and login_session['name'] != 'Mike Acre':
         return redirect(url_for('home'))
-    category = session.query(Category).filter_by(id=category_id).one()
+    category = db.session.query(Category).filter_by(id=category_id).one()
     return render_template('confirmdeletecategory.html', category=category)
 
 
 @app.route('/edititem/<int:item_id>/', methods=['GET', 'POST'])
 @login_required
 def editItem(item_id):
-    item = session.query(OddItem).filter_by(id=item_id).one()
+    item = db.session.query(OddItem).filter_by(id=item_id).one()
     if item.user.id != login_session['user_id']:
         flash('That is not your item!')
         return redirect(url_for('home'))
@@ -413,8 +413,8 @@ def addItem(category_id):
                           price=request.form['price'],
                           category_id=request.form['category'],
                           user_id=login_session['user_id'])
-        session.add(newItem)
-        session.flush()
+        db.session.add(newItem)
+        db.session.flush()
         if request.files['file'].filename == '':
             photo = 'default.jpg'
         else:
@@ -435,8 +435,8 @@ def addItem(category_id):
         session.commit()
         return redirect(url_for('items', category_id=newItem.category_id))
     else:
-        categories = session.query(Category).all()
-        thiscategory = session.query(Category).filter_by(id=category_id).one()
+        categories = db.session.query(Category).all()
+        thiscategory = db.session.query(Category).filter_by(id=category_id).one()
         return render_template('additem.html',
                                categories=categories,
                                thiscategory=thiscategory)
@@ -451,9 +451,9 @@ def uploadImage(file, filename):
 
 @app.route('/items/<int:category_id>/')
 def items(category_id):
-    items = session.query(OddItem).filter_by(
+    items = db.session.query(OddItem).filter_by(
         category_id=category_id).order_by("id desc").all()
-    category = session.query(Category).filter_by(
+    category = db.session.query(Category).filter_by(
         id=category_id).one()
     if 'name' in login_session and login_session['name'] == 'Mike Acre':
         return render_template('items.html',
@@ -469,23 +469,23 @@ def items(category_id):
 
 @app.route('/displayItem/<int:item_id>/', methods=['GET'])
 def displayItem(item_id):
-    item = session.query(OddItem).filter_by(
+    item = db.session.query(OddItem).filter_by(
         id=item_id).one()
     return render_template('item.html', item=item)
 
 
 @app.route('/showuser/<int:user_id>', methods=['GET', 'POST'])
 def showUser(user_id):
-    user = session.query(User).filter_by(
+    user = db.session.query(User).filter_by(
         id=user_id).one()
-    items = session.query(OddItem).filter_by(
+    items = db.session.query(OddItem).filter_by(
         user_id=user_id).all()
     return render_template('user.html', user=user, items=items)
 
 
 @app.route('/showusers/', methods=['GET'])
 def showUsers():
-    users = session.query(User).all()
+    users = db.session.query(User).all()
     return render_template('showusers.html', users=users)
 
 
@@ -498,26 +498,26 @@ def home():
 # JSON response for all Categories
 @app.route('/categories/JSON')
 def categoriesJSON():
-    categories = session.query(Category).all()
+    categories = db.session.query(Category).all()
     return jsonify(Category=[c.serialize for c in categories])
 
 
 # JSON for Items by Category
 @app.route('/items/category/<int:category_id>/JSON')
 def itemsByCategoryJSON(category_id):
-    items = session.query(OddItem).filter_by(category_id=category_id).all()
+    items = db.session.query(OddItem).filter_by(category_id=category_id).all()
     return jsonify(Category=[i.serialize for i in items])
 
 # Json for Items by user
 @app.route('/items/user/<int:user_id>/JSON')
 def itemsByUserJSON(user_id):
-    items = session.query(OddItem).filter_by(user_id=user_id).all()
+    items = db.session.query(OddItem).filter_by(user_id=user_id).all()
     return jsonify(Category=[i.serialize for i in items])
 
 # Json for Items by user
 @app.route('/item/<int:item_id>/JSON')
 def itemJSON(item_id):
-    item = session.query(OddItem).filter_by(id=item_id).one()
+    item = db.session.query(OddItem).filter_by(id=item_id).one()
     return jsonify(Category=[item.serialize])
 
 if __name__ == '__main__':
