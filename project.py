@@ -485,7 +485,7 @@ def showUsers():
 
 @app.route('/')
 def home():
-    #categories = session.query(Category).order_by("name asc").all()
+    categories = session.query(Category).order_by("name asc").all()
     return render_template('categories.html', categories=categories)
 
 
