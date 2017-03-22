@@ -8,14 +8,14 @@
 			My Strange Collection
 	</div>
 	<div class="col-xs-2 login">
-		{%if 'name' not in session %}
+		<!--{%if 'name' not in session %}
 			<img src="{{ url_for('static', filename='blank_user.gif') }}" class="img-responsive"><br>
 			<a href="{{url_for('showLogin')}}">Log-In | Register</a>
 			{% else %}
 			<a href="{{url_for('myAccount')}}">
 			<img src="{{session['picture']}}" class="img-responsive"></a><br>
 			<a href="{{url_for('disconnect')}}">Logout</a>
-			{% endif %}
+			{% endif %}-->
 
 	</div>
 </div>
