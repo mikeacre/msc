@@ -17,7 +17,7 @@ from werkzeug.utils import secure_filename
 import smtplib
 from functools import wraps
 from PIL import Image
-from sqlalchemy.orm import scoped_session
+
 
 
 
