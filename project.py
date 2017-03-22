@@ -39,7 +39,7 @@ engine = create_engine('sqlite:////var/www/msc/odddb.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
-session = scoped_session(DBSession())
+session = DBSession()
 
 def login_required(f):
     @wraps(f)
