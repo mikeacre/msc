@@ -17,7 +17,7 @@ from werkzeug.utils import secure_filename
 import smtplib
 from functools import wraps
 from PIL import Image
-from sqlalchemy.orm import scoped_session 
+from sqlalchemy.orm import scoped_session
 
 
 
@@ -40,8 +40,8 @@ APPLICATION_NAME = "Odd Item Application"
 engine = create_engine('sqlite:////var/www/msc/odddb.db')
 Base.metadata.bind = engine
 
-DBSession = scoped_session(sessionmaker(bind=engine))
-session = DBSession()
+DBSession = sessionmaker(bind=engine)
+session = scoped_session(DBSession())
 
 def login_required(f):
     @wraps(f)
