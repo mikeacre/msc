@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request
 from flask import redirect, jsonify, url_for, flash
 from sqlalchemy import create_engine, asc
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm importdb.sessionmaker
 from db_setup import Base, Category, User, OddItem
-from flask import session as login_session
+from flask importdb.session as login_session
 import random
 import string
 from oauth2client.client import flow_from_clientsecrets
@@ -37,7 +37,7 @@ CLIENT_ID = json.loads(
     open('/var/www/msc/client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Odd Item Application"
 
-# Connect to Database and create database session
+# Connect to Database and create databasedb.session
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////var/www/msc/odddb.db'
 db = SQLAlchemy(app)
 
@@ -254,20 +254,20 @@ def createUser(login_session):
     newUser = User(name=login_session['name'],
                    email=login_session['email'],
                    picture=login_session['picture'])
-    session.add(newUser)
-    session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).one()
+    db.session.add(newUser)
+    db.session.commit()
+    user =db.session.query(User).filter_by(email=login_session['email']).one()
     return user.id
 
 
 def getUserInfo(user_id):
-    user = session.query(User).filter_by(id=user_id).one()
+    user = db.session.query(User).filter_by(id=user_id).one()
     return user
 
 
 def getUserID(email):
     try:
-        user = session.query(User).filter_by(email=email).one()
+        user =db.session.query(User).filter_by(email=email).one()
         return user.id
     except:
         return None
@@ -352,7 +352,7 @@ def deleteItemConfirm(item_id, confirm_id):
         os.remove("%s/%s" % (UPLOAD_FOLDER,item.picture))
         db.session.delete(item)
         flash('Item Deleted')
-        session.commit()
+        db.session.commit()
         return redirect(url_for('home'))
 
 
@@ -397,7 +397,7 @@ def editItem(item_id):
         item.price = request.form['price']
         return redirect(url_for('displayItem', item_id=item_id))
     else:
-        categories = session.query(Category).all()
+        categories = db.session.query(Category).all()
         return render_template('edititem.html',
                                item=item,
                                categories=categories)
@@ -432,7 +432,7 @@ def addItem(category_id):
 
         newItem.picture = photo
         flash('New item %s Successfully Created' % photo)
-        session.commit()
+        db.session.commit()
         return redirect(url_for('items', category_id=newItem.category_id))
     else:
         categories = db.session.query(Category).all()
