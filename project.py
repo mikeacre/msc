@@ -24,10 +24,10 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 # Folder where imaages will be uploaded
-UPLOAD_FOLDER = './static/itempics'
+UPLOAD_FOLDER = '/var/www/msc/static/itempics'
 # Extensions for images that may be uploaded
 ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'gif', 'png'])
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__, static_url_path='/var/www/msc/static')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = 'super secret key'
 app.config['SESSION_TYPE'] = 'filesystem'
