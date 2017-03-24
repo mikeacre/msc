@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request
 from flask import redirect, jsonify, url_for, flash
 from sqlalchemy import create_engine, asc
-from sqlalchemy.orm importdb.sessionmaker
+from sqlalchemy.orm import sessionmaker
 from db_setup import Base, Category, User, OddItem
-from flask importdb.session as login_session
+from flask import session as login_session
 import random
 import string
 from oauth2client.client import flow_from_clientsecrets
@@ -256,7 +256,7 @@ def createUser(login_session):
                    picture=login_session['picture'])
     db.session.add(newUser)
     db.session.commit()
-    user =db.session.query(User).filter_by(email=login_session['email']).one()
+    user = db.session.query(User).filter_by(email=login_session['email']).one()
     return user.id
 
 
@@ -267,7 +267,7 @@ def getUserInfo(user_id):
 
 def getUserID(email):
     try:
-        user =db.session.query(User).filter_by(email=email).one()
+        user = db.session.query(User).filter_by(email=email).one()
         return user.id
     except:
         return None
