@@ -71,7 +71,7 @@ def showLogin():
     return render_template('login.html', STATE=state)
 
 
-@app.route('/fbconnect', methods=['POST'])
+@app.route('/fbconnect', methods=['POST','GET'])
 def fbconnect():
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
